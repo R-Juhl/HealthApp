@@ -1,0 +1,104 @@
+/*** HEADER STYLES ***/
+
+.header {
+  width: 100vw;
+  background-color: #0D181C;
+  color: #F4E9CD;
+  position: fixed;
+  height: 60px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: right;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
+
+.tab-button {
+  background: #2FB1A2;
+  border: none;
+  padding: 20px;
+  cursor: pointer;
+  margin: 5px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tab-button:hover {
+  background: #3fcdb3;
+  border-radius: 20px;
+}
+
+.tab-button svg {
+  width: 30px;
+  height: 30px;
+  color: #F4E9CD; /* Set icon color to white */
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: #1A2F38;
+  color: #F4E9CD;
+  text-align: center;
+  border-radius: 6px;
+  padding: 15px 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 110%;
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tab-button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  font-size: large;
+  font-family: Montserrat;
+  font-weight: bold;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 10px;
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.user-display {
+  padding-right: 10px;
+}
+
+.header-button {
+  color: #F4E9CD;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+  font-family: Montserrat;
+}
+
+.header-button:hover {
+  color: #3fcdb3;
+}

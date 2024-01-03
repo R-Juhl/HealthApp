@@ -1,0 +1,29 @@
+{
+    "globalCloseButton": "Luk",
+
+    "headerCurrentuser": "Nuværende bruger:",
+    "headerCurrentuserstatus": "Ikke logget ind",
+    "headerLogin": "Log ind",
+    "headerLogout": "Log ud",
+    "headerSignup": "Opret bruger",
+
+    "headerModalSignuptitle": "Opret Bruger",
+    "headerModalLogintitle": "Log ind",
+    "headerModalName": "Navn",
+    "headerModalSurname": "Efternavn",
+    "headerModalEmail": "Email",
+    "headerModalPassword": "Kode",
+    "headerModalCreateuserButton": "Opret Bruger",
+    "headerModalLoginButton": "Log ind",
+    "headerModalSignupError": "Kunne ikke oprette bruger",
+    "headerModalSignuppasswordError": "Koden skal være mindst 8 tegn og indeholde mindst 1 stort bogstav",
+    "headerModalLoginError": "Login fejlede",
+
+    "tabsBotTitle": "Bot",
+    "tabsThreadsTitle": "Tråde",
+    "tabsHealthmarkersTitle": "Health Markører",
+    "tabsTrainingprogramTitle": "Trænings Program",
+    "tabsNutritionTitle": "Nutrition",
+    "tabsProfileTitle": "Profil"
+
+}  

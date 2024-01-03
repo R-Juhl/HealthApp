@@ -1,0 +1,30 @@
+{
+    "globalCloseButton": "Close",
+
+    "headerCurrentuser": "Current user:",
+    "headerCurrentuserstatus": "Not logged in",
+    "headerLogin": "Log in",
+    "headerLogout": "Log out",
+    "headerSignup": "Sign up",
+
+    "headerModalSignuptitle": "Register",
+    "headerModalLogintitle": "Log in",
+    "headerModalName": "Name",
+    "headerModalSurname": "Surname",
+    "headerModalEmail": "Email",
+    "headerModalPassword": "Password",
+    "headerModalCreateuserButton": "Create User",
+    "headerModalLoginButton": "Log in",
+    "headerModalSignupError": "Failed to create user",
+    "headerModalSignuppasswordError": "Password must be at least 8 characters long and contain at least one capital letter",
+    "headerModalLoginError": "Login failed",
+
+    "tabsBotTitle": "Bot",
+    "tabsThreadsTitle": "Threads",
+    "tabsHealthmarkersTitle": "Health Markers",
+    "tabsTrainingprogramTitle": "Training Program",
+    "tabsNutritionTitle": "Nutrition",
+    "tabsProfileTitle": "Profile"
+    
+}
+  
