@@ -3,34 +3,40 @@ import React from 'react';
 
 import Header from './Header';
 import Welcome from './Welcome';
+//import Intro from './Intro';
 
-const MainContent = ({ setCurrentView }) => {
+import Home from './Home';
+import Bot from './Bot';
+import Threads from './Threads';
+import Health from './Health';
+import Training from './Training';
+import Nutrition from './Nutrition';
+import Profile from './Profile';
+
+const MainContent = ({ currentView, setCurrentView }) => {
 
     const handleTabClick = (tabName) => {
         setCurrentView(tabName);
-    
-        switch (tabName) {
+    };
+
+    const renderContent = () => {
+        switch (currentView) {
+            case 'Home':
+                return <Home />;
             case 'Bot':
-                setCurrentView('Bot');
-                break;
+                return <Bot />;
             case 'Threads':
-                setCurrentView('Threads');
-                break;
+                return <Threads />;
             case 'HealthMarkers':
-                setCurrentView('HealthMarkers');
-                break;
+                return <Health />;
             case 'TrainingProgram':
-                setCurrentView('TrainingProgram');
-                break;
+                return <Training />;
             case 'Nutrition':
-                setCurrentView('Nutrition');
-                break;
+                return <Nutrition />;
             case 'Profile':
-                setCurrentView('Profile');
-                break;
-            // Add more cases for other tabs as needed
+                return <Profile />;
             default:
-                break;
+                return <Welcome />;
         }
     };
 
@@ -39,9 +45,10 @@ const MainContent = ({ setCurrentView }) => {
 
             <Header 
               onTabClick={handleTabClick}
+              currentView={currentView}
             />
 
-            <Welcome />
+            {renderContent()}
 
         </div>
     );

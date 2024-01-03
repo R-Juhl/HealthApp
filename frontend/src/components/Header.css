@@ -5,8 +5,10 @@
   background-color: #0D181C;
   color: #F4E9CD;
   position: fixed;
+  top: 0;
   height: 60px;
-  padding: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,9 +18,23 @@
 }
 
 .header-left {
+  padding-left: 20px;
+}
+
+.header-right {
+  flex-direction: column;
+  padding-right: 20px;
+}
+
+.header-left, .header-right {
+  flex: 0 0 auto;
+  width: 10%;
+}
+
+.header-center {
+  flex: 1; /* Take up the remaining space */
+  justify-content: center;
   display: flex;
-  align-items: center;
-  padding-left: 10px;
 }
 
 .tab-button {
@@ -40,16 +56,30 @@
   border-radius: 20px;
 }
 
+.selected-tab {
+  background: #F4E9CD;
+  border-radius: 20px; /* Rounded corners */
+}
+
+.selected-tab:hover {
+  background: #F4E9CD;
+  border-radius: 20px; /* Rounded corners */
+}
+
 .tab-button svg {
   width: 30px;
   height: 30px;
   color: #F4E9CD; /* Set icon color to white */
 }
 
+.selected-tab svg {
+  color: #0D181C; /* Icon color for selected tab */
+}
+
 .tooltip-text {
   visibility: hidden;
   width: 120px;
-  background-color: #1A2F38;
+  background-color: #0D181C;
   color: #F4E9CD;
   text-align: center;
   border-radius: 6px;
@@ -72,13 +102,6 @@
   font-weight: bold;
 }
 
-.header-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding-right: 10px;
-}
-
 .button-group {
   display: flex;
   align-items: center;
@@ -94,7 +117,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
   margin: 5px;
   font-family: Montserrat;
 }

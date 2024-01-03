@@ -19,6 +19,7 @@
     "headerModalSignuppasswordError": "Koden skal være mindst 8 tegn og indeholde mindst 1 stort bogstav",
     "headerModalLoginError": "Login fejlede",
 
+    "tabsHomeTitle": "Startside",
     "tabsBotTitle": "Bot",
     "tabsThreadsTitle": "Tråde",
     "tabsHealthmarkersTitle": "Health Markører",

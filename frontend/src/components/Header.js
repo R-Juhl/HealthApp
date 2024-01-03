@@ -9,6 +9,7 @@ import dk from '../languages/dk.json';
 import UserIdContext from '../contexts/UserIdContext';
 
 import { HiCollection, HiFingerPrint, HiUser } from "react-icons/hi";
+import { FaHome } from "react-icons/fa";
 import { RiRobot2Fill } from "react-icons/ri";
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { LuBeef } from "react-icons/lu";
@@ -19,7 +20,7 @@ import { LuBeef } from "react-icons/lu";
 <HiLightBulb />
 */
 
-function Header({ onTabClick }) {
+function Header({ onTabClick, currentView }) {
   const { handleLogin, handleLogout, isLoggedIn, currentUser } = useContext(UserIdContext);
   const { language } = useLanguage();
   const text = language === 'en' ? en : dk;
@@ -29,6 +30,10 @@ function Header({ onTabClick }) {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signUpError, setSignUpError] = useState('');
   const [loginError, setLoginError] = useState('');
+  
+  const getTabButtonClass = (tabName) => {
+    return `tab-button ${currentView === tabName ? 'selected-tab' : ''}`;
+  };
 
   // Handle change for sign-up and login forms
   const handleChange = (e, formType) => {
@@ -93,28 +98,36 @@ function Header({ onTabClick }) {
   
   return (
     <div className="header">
+
       <div className="header-left">
-        <button className="tab-button" onClick={() => onTabClick('Bot')}>
+        <button className={getTabButtonClass('Home')} onClick={() => onTabClick('Home')}>
+          <FaHome />
+          <span className="tooltip-text">{text.tabsHomeTitle}</span>
+        </button>
+      </div>
+
+      <div className="header-center">
+        <button className={getTabButtonClass('Bot')} onClick={() => onTabClick('Bot')}>
           <RiRobot2Fill />
           <span className="tooltip-text">{text.tabsBotTitle}</span>
         </button>
-        <button className="tab-button" onClick={() => onTabClick('Threads')}>
+        <button className={getTabButtonClass('Threads')} onClick={() => onTabClick('Threads')}>
           <HiCollection />
           <span className="tooltip-text">{text.tabsThreadsTitle}</span>
         </button>
-        <button className="tab-button" onClick={() => onTabClick('HealthMarkers')}>
+        <button className={getTabButtonClass('HealthMarkers')} onClick={() => onTabClick('HealthMarkers')}>
           <HiFingerPrint />
           <span className="tooltip-text">{text.tabsHealthmarkersTitle}</span>
         </button>
-        <button className="tab-button" onClick={() => onTabClick('TrainingProgram')}>
+        <button className={getTabButtonClass('TrainingProgram')} onClick={() => onTabClick('TrainingProgram')}>
           <GiWeightLiftingUp />
           <span className="tooltip-text">{text.tabsTrainingprogramTitle}</span>
         </button>
-        <button className="tab-button" onClick={() => onTabClick('Nutrition')}>
+        <button className={getTabButtonClass('Nutrition')} onClick={() => onTabClick('Nutrition')}>
           <LuBeef />
           <span className="tooltip-text">{text.tabsNutritionTitle}</span>
         </button>
-        <button className="tab-button" onClick={() => onTabClick('Profile')}>
+        <button className={getTabButtonClass('Profile')} onClick={() => onTabClick('Profile')}>
           <HiUser />
           <span className="tooltip-text">{text.tabsProfileTitle}</span>
         </button>
@@ -131,6 +144,7 @@ function Header({ onTabClick }) {
           )}
         </div>
       </div>
+
       {/* Sign-Up Modal */}
       <Modal 
         className="modal" 

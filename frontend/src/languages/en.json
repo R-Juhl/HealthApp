@@ -19,6 +19,7 @@
     "headerModalSignuppasswordError": "Password must be at least 8 characters long and contain at least one capital letter",
     "headerModalLoginError": "Login failed",
 
+    "tabsHomeTitle": "Home",
     "tabsBotTitle": "Bot",
     "tabsThreadsTitle": "Threads",
     "tabsHealthmarkersTitle": "Health Markers",

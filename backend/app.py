@@ -7,7 +7,6 @@ from itsdangerous import URLSafeTimedSerializer as Serializer
 from datetime import datetime, timedelta
 from modules.models import db, User
 
-from pathlib import Path
 import openai
 client = openai.OpenAI(
   api_key = os.environ.get("OPENAI_API_KEY_AIHEALTHCOACH")

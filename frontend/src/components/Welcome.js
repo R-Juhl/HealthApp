@@ -7,7 +7,7 @@ function Welcome() {
 
   return (
     <div className="welcome-container">
-        <p>Welcome container content</p>
+        <h1>Welcome to our AI Health App</h1>
     </div>
   );
 }

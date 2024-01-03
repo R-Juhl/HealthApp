@@ -1,25 +1,18 @@
-/* Overlay for Modal */
-.ReactModal__Overlay {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* MODAL STYLES */
+
 .modal {
-    background-color: #9DBEBB;
-    color: #031926;
+    background-color: #2D5262;
+    color: #F4E9CD;
     border-radius: 8px;
     padding: 20px;
     width: 30%;
-    /* Centering modal content */
     display: flex;
     flex-direction: column;
     margin: auto;
 }
 
 .modal h2 {
-    color: #031926;
+    color: #F4E9CD;
     text-align: center;
 }
 
@@ -30,7 +23,9 @@
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid #77ACA2;
+    border: 1px solid #2FB1A2;
+    background-color: #0D181C;
+    color: #F4E9CD;
     border-radius: 4px;
     box-sizing: border-box;
     font-family: Montserrat;
@@ -41,7 +36,7 @@
     width: 100%;
     padding: 10px;
     margin-top: 10px;
-    background-color: #468189;
+    background-color: #2FB1A2;
     color: #F4E9CD;
     border: none;
     border-radius: 4px;
@@ -53,7 +48,7 @@
 }
 
 .modal button:hover {
-    background-color: #77ACA2;
+    background-color: #3fcdb3;
 }
 
 /* Message Style */

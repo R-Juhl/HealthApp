@@ -1,0 +1,18 @@
+/*** TRAINING STYLES ***/
+
+.training-container {
+    width: 100vw;
+    height: calc(100vh - 60px);
+    background-color: #1A2F38;
+    color: #F4E9CD;
+    position: fixed;
+    top: 60px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 20px; /* Space between flex items */
+    z-index: 9;
+}
