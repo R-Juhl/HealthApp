@@ -1,0 +1,41 @@
+AI Health App todos:
+
+
+Create GitHub Repo
+	commit and push initial app
+
+
+
+Tabs:
+General
+    Make tabs load different main content pages
+    Tabs only clickable with user ??
+Bot
+	Simple thread/chat interface with gpt assistant
+	Image input option (work with gpt, then gpt assistant to analyze gpt output, attached to original message
+    Audio input/output option
+    Functions:
+        To recognize if the user wants to:
+        1) add scale picture as weight to healthmarkers/progress tab
+        2) other stuff that could potentially be integrated with other app components/functions
+Threads
+    Collection of recent X bot threads
+    Star to highlight and save threads
+Healthmarkers/progress
+    Add some standard data here
+Training/program
+    ??
+Nutrition
+    ??
+profile
+    Saved info from Intro component/segment. Able to edit and add info to profile to personalize app experience
+    Integrate app settings, or add as separate tab
+
+
+Other components:
+Welcome
+    Short intro, signup or login buttons
+Intro
+    To set up profile with age, weight, height, goals, motivation, occupation, exercise levels, current diet, etc.
+    Add photo upload (handled confidentially with no storage (??), only visible to AI for analysis) with an AI assessment
+        Implement future photo into some sort of analysis to be incorporated in "Health Markers" or a "Progress" tab perhaps
