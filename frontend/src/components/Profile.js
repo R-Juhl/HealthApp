@@ -1,4 +1,4 @@
-// Welcome.js
+// Profile.js
 import React from 'react';
 import './Profile.css';
 

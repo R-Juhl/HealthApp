@@ -1,4 +1,4 @@
-// Welcome.js
+// Training.js
 import React from 'react';
 import './Training.css';
 

@@ -28,13 +28,149 @@
 
 .header-left, .header-right {
   flex: 0 0 auto;
-  width: 10%;
+  width: 25%;
 }
 
 .header-center {
   flex: 1; /* Take up the remaining space */
   justify-content: center;
   display: flex;
+}
+
+.burger-menu {
+  display: none;
+  cursor: pointer;
+  background: #2FB1A2;
+  border: none;
+  padding: 20px;
+  margin: 5px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.burger-menu:hover {
+  background: #3fcdb3;
+  border-radius: 20px;
+}
+
+.burger-menu svg {
+  width: 30px;
+  height: 30px;
+  color: #F4E9CD;
+}
+
+.burger-menu .dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0D181C;
+  width: 180px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 11;
+}
+
+.dropdown-tab {
+  background: #2FB1A2;
+  color: #F4E9CD;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin: 5px 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  width: 180px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.dropdown-tab:hover {
+  background: #3fcdb3;
+  border-radius: 20px;
+}
+
+.dropdown-tab svg {
+  margin-right: 10px;
+}
+
+.selected-dropdown-tab {
+  background: #F4E9CD;
+  color: #0D181C;
+  border-radius: 20px;
+}
+
+.selected-dropdown-tab svg {
+  color: #0D181C;
+}
+
+.selected-dropdown-tab:hover {
+  background: #E8DAB2;
+}
+
+/* Hide burger menu for tablets and smaller*/
+@media (min-width: 768px) {
+  .burger-menu {
+    display: none;
+  }
+}
+
+/* Hide tabs and show burger menu for tablets and smaller*/
+@media (max-width: 768px) {
+  .header-center .tab-button {
+    display: none;
+  }
+  
+  .burger-menu {
+    display: flex;
+  }
+}
+
+/* For tablets */
+@media (max-width: 768px) {
+  .header-right, .header-right .user-display {
+    font-size: 14px;
+  }
+
+  .header-right .header-button {
+    font-size: 14px;
+  }
+}
+
+/* For mobile phones */
+@media (max-width: 480px) {
+  .header-right, .header-right .user-display {
+    font-size: 10px;
+  }
+
+  .header-right .header-button {
+    font-size: 10px;
+    margin: 2px 5px;
+  }
+
+  /* Stacking buttons vertically on mobile */
+  .button-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+  }
+}
+
+.normal-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tab-button {
@@ -58,22 +194,22 @@
 
 .selected-tab {
   background: #F4E9CD;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 20px;
 }
 
 .selected-tab:hover {
-  background: #F4E9CD;
-  border-radius: 20px; /* Rounded corners */
+  background: #E8DAB2;
+  border-radius: 20px;
 }
 
 .tab-button svg {
   width: 30px;
   height: 30px;
-  color: #F4E9CD; /* Set icon color to white */
+  color: #F4E9CD;
 }
 
 .selected-tab svg {
-  color: #0D181C; /* Icon color for selected tab */
+  color: #0D181C;
 }
 
 .tooltip-text {
@@ -119,6 +255,7 @@
   cursor: pointer;
   margin: 5px;
   font-family: Montserrat;
+  font-size: 16px;
 }
 
 .header-button:hover {

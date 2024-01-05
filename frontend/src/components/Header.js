@@ -1,5 +1,5 @@
 // Header.js
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import Modal from 'react-modal';
 import './Header.css';
 import './Header_modals.css';
@@ -8,14 +8,13 @@ import en from '../languages/en.json';
 import dk from '../languages/dk.json';
 import UserIdContext from '../contexts/UserIdContext';
 
-import { HiCollection, HiFingerPrint, HiUser } from "react-icons/hi";
+import { HiMenuAlt2, HiCollection, HiFingerPrint, HiUser } from "react-icons/hi";
 import { FaHome } from "react-icons/fa";
 import { RiRobot2Fill } from "react-icons/ri";
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { LuBeef } from "react-icons/lu";
 
-/* Use later
-<HiMenuAlt2 />
+/* Use later for light/dark mode
 <HiOutlineMoon />
 <HiLightBulb />
 */
@@ -30,9 +29,86 @@ function Header({ onTabClick, currentView }) {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signUpError, setSignUpError] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
   
   const getTabButtonClass = (tabName) => {
     return `tab-button ${currentView === tabName ? 'selected-tab' : ''}`;
+  };
+
+  const getDropdownTabClass = (tabName) => {
+    return `dropdown-tab ${currentView === tabName ? 'selected-dropdown-tab' : ''}`;
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const renderTabsForDropdown = () => {
+    return (
+      <>
+        <button className={getDropdownTabClass('Bot')} onClick={() => { onTabClick('Bot'); toggleMenu(); }}>
+          <RiRobot2Fill />
+          <span>{text.tabsBotTitle}</span>
+        </button>
+        <button className={getDropdownTabClass('Threads')} onClick={() => { onTabClick('Threads'); toggleMenu(); }}>
+          <HiCollection />
+          <span>{text.tabsThreadsTitle}</span>
+        </button>
+        <button className={getDropdownTabClass('HealthMarkers')} onClick={() => { onTabClick('HealthMarkers'); toggleMenu(); }}>
+          <HiFingerPrint />
+          <span>{text.tabsHealthmarkersTitle}</span>
+        </button>
+        <button className={getDropdownTabClass('TrainingProgram')} onClick={() => { onTabClick('TrainingProgram'); toggleMenu(); }}>
+          <GiWeightLiftingUp />
+          <span>{text.tabsTrainingprogramTitle}</span>
+        </button>
+        <button className={getDropdownTabClass('Nutrition')} onClick={() => { onTabClick('Nutrition'); toggleMenu(); }}>
+          <LuBeef />
+          <span>{text.tabsNutritionTitle}</span>
+        </button>
+        <button className={getDropdownTabClass('Profile')} onClick={() => { onTabClick('Profile'); toggleMenu(); }}>
+          <HiUser />
+          <span>{text.tabsProfileTitle}</span>
+        </button>
+      </>
+    );
+  };
+
+  const handleResize = useCallback(() => {
+    if (window.innerWidth > 768 && isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+
+    // Function to check if clicked outside of menu
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleResize, dropdownRef, isMenuOpen]);
+
+  const renderBurgerMenu = () => {
+    return (
+      <div className="burger-menu" onClick={toggleMenu}>
+        <HiMenuAlt2 />
+        {isMenuOpen && (
+          <div className="dropdown-menu" ref={dropdownRef}>
+            {renderTabsForDropdown()}
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Handle change for sign-up and login forms
@@ -95,18 +171,10 @@ function Header({ onTabClick, currentView }) {
       setLoginError('');
     }
   };
-  
-  return (
-    <div className="header">
 
-      <div className="header-left">
-        <button className={getTabButtonClass('Home')} onClick={() => onTabClick('Home')}>
-          <FaHome />
-          <span className="tooltip-text">{text.tabsHomeTitle}</span>
-        </button>
-      </div>
-
-      <div className="header-center">
+  const renderTabs = () => {
+    return (
+      <>
         <button className={getTabButtonClass('Bot')} onClick={() => onTabClick('Bot')}>
           <RiRobot2Fill />
           <span className="tooltip-text">{text.tabsBotTitle}</span>
@@ -131,6 +199,28 @@ function Header({ onTabClick, currentView }) {
           <HiUser />
           <span className="tooltip-text">{text.tabsProfileTitle}</span>
         </button>
+      </>
+    );
+  };
+  
+  return (
+    <div className="header">
+
+      <div className="header-left">
+        <button className={getTabButtonClass('Home')} onClick={() => onTabClick('Home')}>
+          <FaHome />
+          <span className="tooltip-text">{text.tabsHomeTitle}</span>
+        </button>
+      </div>
+
+      <div className="header-center">
+        {renderBurgerMenu()}
+        {/* Render normal tabs for larger screens */}
+        {!isMenuOpen && (
+          <div className="normal-tabs">
+            {renderTabs()}
+          </div>
+        )}
       </div>
 
       <div className="header-right">
