@@ -3,46 +3,46 @@ import os
 import openai
 from flask import jsonify
 import time
-from .models import db, User, UserCourseSession
+from .models import db, User, UserThreads
 from .assistant_config import assistant_ids, assistant_configs
 
 client = openai.OpenAI(
-  api_key = os.environ.get("OPENAI_API_KEY_ONEMONTH")
+  api_key = os.environ.get("OPENAI_API_KEY_HEALTHAPP")
 )
 
 class Teacher:
     def __init__(self, assistant_id):
         self.assistant_id = assistant_id
 
-def get_course_thread(user_id, course_id):
-    session = UserCourseSession.query.filter_by(user_id=user_id, course_id=course_id).first()
+def get_thread(user_id):
+    session = UserThreads.query.filter_by(user_id=user_id).first()
 
     # Retrieve user language preference from the database
     user = User.query.filter_by(id=user_id).first()
     if not user:
-        print(f"From get_course_thread: User with ID {user_id} not found")
+        print(f"From get_thread: User with ID {user_id} not found")
         user_lang = 'en'  # default to English
     else:
         user_lang = user.language
-        print(f"From get_course_thread: Fetched User Language: {user_lang}")
+        print(f"From get_thread: Fetched User Language: {user_lang}")
 
-    # Update assistant based on course_id and user's language
-    assistant_config = assistant_configs.get(int(course_id), {}).get(user_lang, {})
+    # Update assistant based on user's language
+    assistant_config = assistant_configs.get(user_lang, {})
 
     if assistant_config:
         # Update the assistant with the new configuration
         client.beta.assistants.update(
-            assistant_id=assistant_ids[course_id],
+            assistant_id=assistant_ids[1], # Default Health Bot, but implement a way to change this later
             instructions=assistant_config.get("instructions", ""),
             name=assistant_config.get("name", "AI Assistant"),
         )
 
     if not session:
         # Create new session and thread
-        assistant_id = assistant_ids.get(course_id)
+        assistant_id = assistant_ids.get(1)
         teacher = Teacher(assistant_id)
         new_thread = client.beta.threads.create()
-        new_session = UserCourseSession(user_id=user_id, course_id=course_id, thread_id=new_thread.id)
+        new_session = UserThreads(user_id=user_id, thread_id=new_thread.id)
         db.session.add(new_session)
         db.session.commit()
         return new_thread.id, True
@@ -64,7 +64,7 @@ def get_thread_messages(thread_id):
     
     return messages_list
 
-def get_initial_message(thread_id, user_id, course_id):
+def get_initial_message(thread_id, user_id):
     # Retrieve user language preference from the database
     user = User.query.filter_by(id=user_id).first()
     if not user:
@@ -74,10 +74,10 @@ def get_initial_message(thread_id, user_id, course_id):
         user_lang = user.language
         print(f"From get_initial_message: Fetched User Language: {user_lang}")
 
-    assistant_config = assistant_configs.get(int(course_id), {}).get(user_lang, {})
+    assistant_config = assistant_configs.get(1).get(user_lang, {})
     print(f"Assistant Config in get_initial_message: {assistant_config}")  # Additional Debug Log
 
-    initial_content = assistant_config.get("initial_message", "Welcome to the course.")
+    initial_content = assistant_config.get("initial_message", "Error: Initial message not found")
     print(f"Initial Content in get_initial_message: {initial_content}")  # Additional Debug Log
 
     if not thread_id:
@@ -92,21 +92,20 @@ def get_initial_message(thread_id, user_id, course_id):
     initial_message = message_response.content[0].text.value if message_response.content else ""
     return jsonify({"message": initial_message, "thread_id": thread_id})
 
-def continue_course(thread_id, user_input):
+def continue_thread(thread_id, user_input):
 
     print(f"Received the following user_input to add to thread: {user_input}")
     cancel_active_runs(thread_id)
 
-    # Fetch the course ID from the UserCourseSession using the thread ID
-    session = UserCourseSession.query.filter_by(thread_id=thread_id).first()
+    # Fetch the thread ID from the UserThreads using the thread ID
+    session = UserThreads.query.filter_by(thread_id=thread_id).first()
     if not session:
         return jsonify({"error": "Session not found"}), 404
 
-    course_id = session.course_id
-    assistant_id = assistant_ids.get(course_id)
+    assistant_id = assistant_ids.get(1)
 
     if not assistant_id:
-        return jsonify({"error": "Assistant ID not found for the course"}), 404
+        return jsonify({"error": "Assistant ID not found for the thread"}), 404
 
     # Send user input to the thread
     client.beta.threads.messages.create(
@@ -140,8 +139,13 @@ def cancel_active_runs(thread_id):
     active_runs = client.beta.threads.runs.list(thread_id=thread_id)
     for run in active_runs.data:
         print(run.status)
-        if run.status not in ["completed", "failed"]:
-            client.beta.threads.runs.cancel(thread_id=thread_id, run_id=run.id)
+        # Only attempt to cancel runs that are not completed or expired
+        if run.status not in ["completed", "expired"]:
+            try:
+                client.beta.threads.runs.cancel(thread_id=thread_id, run_id=run.id)
+            except openai.Error as e:
+                # Handle specific OpenAI API errors here, if needed
+                print(f"Error canceling run {run.id}: {e}")
 
 def wait_for_run_completion(thread_id, run_id):
     max_retries = 100

@@ -1,15 +1,20 @@
 # app.py:
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from datetime import datetime, timedelta
-from modules.models import db, User
+from modules.models import db, User, UserThreads
 
+# Modules:
+from modules.bot_default import get_initial_message, continue_thread, get_thread, get_thread_messages
+
+from pathlib import Path
+import uuid
 import openai
 client = openai.OpenAI(
-  api_key = os.environ.get("OPENAI_API_KEY_AIHEALTHCOACH")
+  api_key = os.environ.get("OPENAI_API_KEY_HEALTHAPP")
 )
 
 app = Flask(__name__)
@@ -35,7 +40,7 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_TOKEN_KEY_HEALTHAPP")
 db.init_app(app)
 
 with app.app_context():
-    db.drop_all() # For dev to delete all tables and create them from scratch
+    #db.drop_all() # For dev to delete all tables and create them from scratch
     db.create_all()
 
 @app.route('/create_user', methods=['POST'])
@@ -132,6 +137,74 @@ def update_user_version():
         db.session.commit()
         return jsonify({"message": "User version updated successfully"}), 200
     return jsonify({"error": "User not found"}), 404
+
+
+### Module functions/routes: ###
+
+# Route for getting or creating a thread #
+@app.route('/get_or_create_thread', methods=['POST'])
+def get_or_create_thread():
+    data = request.json
+    user_id = data['user_id']
+    thread_id, is_new_thread = get_thread(user_id)
+    return jsonify({"thread_id": thread_id, "isNewThread": is_new_thread})
+
+# Route for getting the messages of a thread #
+@app.route('/get_thread_messages', methods=['POST'])
+def handle_get_thread_messages():
+    data = request.json
+    thread_id = data['thread_id']
+    messages_list = get_thread_messages(thread_id)
+    return jsonify({"messages": messages_list})
+
+# Route for starting a thread #
+@app.route('/thread_initial', methods=['GET'])
+def handle_initial():
+    thread_id = request.args.get('thread_id')
+    user_id = request.args.get('user_id')
+    print(f"User ID received in handle_initial: {user_id}")
+    return get_initial_message(thread_id, user_id)
+
+# Route for continuing a thread #
+@app.route('/thread_continue', methods=['POST'])
+def handle_continue():
+    data = request.json
+    thread_id = data.get('thread_id')
+    user_input = data.get('user_input')
+    response = continue_thread(thread_id, user_input)
+    return response
+
+# Route for getting the user's thread sessions #
+@app.route('/get_user_thead_sessions', methods=['POST'])
+def get_user_thread_sessions():
+    user_id = request.json.get('user_id')
+    sessions = UserThreads.query.filter_by(user_id=user_id).all()
+    sessions_data = [{'thread_id': session.thread_id} for session in sessions]
+    return jsonify(sessions_data)
+
+# Route for converting text to speech #
+@app.route('/text_to_speech', methods=['POST'])
+def text_to_speech():
+    data = request.json
+    text = data.get('text')
+    
+    try:
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="echo",
+            input=text
+        )
+        speech_file_path = Path('audio') / f"speech_{uuid.uuid4()}.mp3"
+        response.stream_to_file(str(speech_file_path))
+        # Ensure the URL is correct and accessible from the frontend
+        audio_url = f"http://localhost:5000/audio/{speech_file_path.name}"
+        return jsonify({"audio_url": audio_url}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/audio/<filename>')
+def uploaded_file(filename):
+    return send_from_directory('audio', filename)
 
 
 if __name__ == '__main__':

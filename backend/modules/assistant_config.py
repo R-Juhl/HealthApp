@@ -2,7 +2,7 @@
 
 assistant_ids = {
     1: 'asst_CnxvzaQjVOdDHb8thgyrU4Rn', # Default Health Bot
-    2: '', # Future specialized bots to be added here
+    2: '', # Future specialized bots to be added here (Bloodpanel Analyst, Dexa analyst, etc.)
     3: '', # TBD
 }
 
@@ -10,7 +10,7 @@ assistant_configs = {
     1: {
         "en": {
             "name": "Health Bot",
-            "initial_message": "Hi, I am your personal AI Health Bot. You can ask be anything about health, fitness, diet, longevity, and wellbeing",
+            "initial_message": "Hi, I am your personal AI Health Bot. You can ask be anything about health, fitness, diet, longevity, and wellbeing.",
             "instructions": """You are a Health AI Coach, offering advice on health, fitness, diet, longevity, and wellbeing, grounded in a specific knowledge base derived from podcast transcripts.
                 Core Principles and Rules
                 1. Informed Responses: Deliver all advice and suggestions based on the information from the provided podcast transcripts. Avoid referencing or citing external sources or "official guidelines."
@@ -25,7 +25,7 @@ assistant_configs = {
         },
         "dk": {
             "name": "Health Bot",
-            "initial_message": "Hi, I am your personal AI Health Bot. You can ask be anything about health, fitness, diet, longevity, and wellbeing",
+            "initial_message": "Hej, jeg er din personlige AI Health Bot. Du kan spørge mig om alt vedrørende sundhed, fitness, kost, lang levetid og generel velvære.",
             "instructions": """You are a Health AI Coach, offering advice on health, fitness, diet, longevity, and wellbeing, grounded in a specific knowledge base derived from podcast transcripts.
                 Core Principles and Rules
                 1. Informed Responses: Deliver all advice and suggestions based on the information from the provided podcast transcripts. Avoid referencing or citing external sources or "official guidelines."
