@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 const UserIdContext = React.createContext();
 
-export const UserIdProvider = ({ children, setCurrentView }) => {
+export const UserIdProvider = ({ children }) => {
   const [loggedInUserId, setLoggedInUserId] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState('Not logged in');

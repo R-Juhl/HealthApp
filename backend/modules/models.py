@@ -1,5 +1,6 @@
 # models.py
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -16,5 +17,5 @@ class User(db.Model):
 class UserThreads(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(db.Integer)
     thread_id = db.Column(db.String(100))
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)

@@ -141,13 +141,27 @@ def update_user_version():
 
 ### Module functions/routes: ###
 
-# Route for getting or creating a thread #
-@app.route('/get_or_create_thread', methods=['POST'])
-def get_or_create_thread():
-    data = request.json
-    user_id = data['user_id']
-    thread_id, is_new_thread = get_thread(user_id)
-    return jsonify({"thread_id": thread_id, "isNewThread": is_new_thread})
+# Route for creating a new thread #
+@app.route('/create_new_thread', methods=['POST'])
+def create_new_thread():
+    user_id = request.json['user_id']
+    new_thread = client.beta.threads.create()  # Assuming this creates a new thread in OpenAI
+    new_session = UserThreads(user_id=user_id, thread_id=new_thread.id)
+    db.session.add(new_session)
+    db.session.commit()
+    return jsonify({"thread_id": new_thread.id}), 201
+
+# Route for getting the user's threads #
+@app.route('/get_user_threads', methods=['POST'])
+def get_user_threads():
+    user_id = request.json['user_id']
+    sessions = UserThreads.query.filter_by(user_id=user_id).all()
+    session_list = [{
+        "thread_id": session.thread_id,
+        "date": session.date_created.strftime("%Y-%m-%d"),  # Formatting the date
+        "title": "Thread Title"  # Placeholder title
+    } for session in sessions]
+    return jsonify({"threads": session_list}), 200
 
 # Route for getting the messages of a thread #
 @app.route('/get_thread_messages', methods=['POST'])

@@ -1,3 +1,4 @@
+// App.js
 import React, { useState } from 'react';
 import './App.css';
 import Modal from 'react-modal';
@@ -13,6 +14,7 @@ Modal.setAppElement('#root');
 
 function App() {
   const [currentView, setCurrentView] = useState('Welcome');
+  const [selectedThreadId, setSelectedThreadId] = useState(null);
 
   return (
     <UserIdProvider setCurrentView={setCurrentView}>
@@ -25,7 +27,11 @@ function App() {
               <MainContent
                 currentView={currentView}
                 setCurrentView={setCurrentView}
+                selectedThreadId={selectedThreadId}
+                setSelectedThreadId={setSelectedThreadId} 
               />
+
+
 
             </div>
           </div>

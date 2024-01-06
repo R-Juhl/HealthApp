@@ -8,7 +8,7 @@ import UserIdContext from '../contexts/UserIdContext';
 
 import { HiOutlineVolumeUp, HiOutlineVolumeOff, HiPlusCircle, HiMicrophone } from "react-icons/hi";
 
-function Bot({ onLeaveThread }) {
+function Bot({ onLeaveThread, selectedThreadId, setSelectedThreadId }) {
   const { loggedInUserId } = useContext(UserIdContext);
   //const { language } = useLanguage();
   //const text = language === 'en' ? en : dk;
@@ -17,7 +17,6 @@ function Bot({ onLeaveThread }) {
   const [isLoading, setIsLoading] = useState(false);
   const [customMessage, setCustomMessage] = useState("");
   const [loadingDots, setLoadingDots] = useState('');
-  const [isThreadCreationStarted, setIsThreadCreationStarted] = useState(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioSrc, setAudioSrc] = useState('');
@@ -66,51 +65,56 @@ function Bot({ onLeaveThread }) {
     setMessages([formattedInitialMessage]);
   }, []);
 
-  const fetchAllMessages = useCallback(async (threadId) => {
-    const response = await fetch('http://localhost:5000/get_thread_messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ thread_id: threadId })
-    });
-    const data = await response.json();
-    if (data.messages) {
-      const formattedMessages = data.messages.map(msg => formatText(msg.text, msg.role));
-      setMessages(formattedMessages.reverse());
-    }
-  }, []);
-
+  // Load saved thread or create new thread
   useEffect(() => {
-    const initiateThread = async () => {
-      if (!isThreadCreationStarted && loggedInUserId) {
-        setIsThreadCreationStarted(true);
-        setIsLoading(true);
-  
-        try {
-          // Get or create thread
-          const threadResponse = await fetch('http://localhost:5000/get_or_create_thread', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ user_id: loggedInUserId })
-          });
-          const threadData = await threadResponse.json();
-          setThreadId(threadData.thread_id);
-  
-          // Fetch initial or all messages
-          if (threadData.isNewThread) {
-            await fetchInitialMessage(threadData.thread_id, loggedInUserId);
-          } else {
-            await fetchAllMessages(threadData.thread_id);
-          }
-        } catch (error) {
-          console.error('Error handling thread session:', error);
-        } finally {
-          setIsLoading(false);
+    console.log("Received Thread ID in Bot.js from Threads.js:", selectedThreadId);
+    const loadThread = async (threadId) => {
+      setIsLoading(true);
+      try {
+        // Load the messages of the selected thread
+        const response = await fetch(`http://localhost:5000/get_thread_messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ thread_id: threadId })
+        });
+        const data = await response.json();
+        if (data.messages) {
+          const formattedMessages = data.messages.map(msg => formatText(msg.text, msg.role));
+          setMessages(formattedMessages.reverse());
         }
+        setThreadId(threadId);
+      } catch (error) {
+        console.error('Error loading thread:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
   
-    initiateThread();
-  }, [loggedInUserId, isThreadCreationStarted, fetchInitialMessage, fetchAllMessages]);
+    const initiateThread = async () => {
+      setIsLoading(true);
+      try {
+        // Create a new thread
+        const threadResponse = await fetch('http://localhost:5000/create_new_thread', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: loggedInUserId })
+        });
+        const threadData = await threadResponse.json();
+        setThreadId(threadData.thread_id);
+        await fetchInitialMessage(threadData.thread_id, loggedInUserId);
+      } catch (error) {
+        console.error('Error handling thread session:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    if (selectedThreadId) {
+      loadThread(selectedThreadId);
+    } else {
+      initiateThread();
+    }
+  }, [selectedThreadId, loggedInUserId, fetchInitialMessage]);
   
 
   const handleNext = async (userInput) => {
@@ -166,6 +170,11 @@ function Bot({ onLeaveThread }) {
     return formattedText;
   };
 
+  const handleLeaveThread = () => {
+    setSelectedThreadId(null);
+    onLeaveThread();
+  };
+
   return (
     <div className="bot-container">
       <div className="bot-chat-container">
@@ -205,7 +214,7 @@ function Bot({ onLeaveThread }) {
             </div>
           </>
           <div>
-            <button className="button-style" onClick={onLeaveThread}>Leave thread</button>
+            <button className="button-style" onClick={handleLeaveThread}>Leave thread</button>
           </div>
         </div>
       </div>
