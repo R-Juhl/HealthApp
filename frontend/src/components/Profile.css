@@ -3,16 +3,95 @@
 .profile-container {
     width: 100vw;
     height: calc(100vh - 60px);
+    overflow-y: auto;
     background-color: #1A2F38;
     color: #F4E9CD;
     position: fixed;
-    top: 60px;
-    padding: 10px;
+    top: 90px;
+    padding-top: 30px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     flex-direction: column;
     gap: 20px; /* Space between flex items */
+    font-family: Montserrat;
     z-index: 9;
+}
+
+.profile-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-container input[type="number"],
+.profile-container input[type="range"],
+.profile-container textarea {
+    margin: 5px 0;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #2FB1A2;
+    border-radius: 4px;
+    background-color: #F4E9CD;
+}
+
+.profile-container label {
+    display: block;
+    margin: 5px 0;
+}
+
+.profile-container textarea {
+    height: 80px;
+    resize: none; /* Prevent manual resize */
+    overflow-y: auto; /* Scrollable */
+}
+
+.profile-container input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.profile-container input[type="radio"] {
+    margin-right: 5px;
+}
+
+/* Additional styles for slider */
+.profile-container input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    background: #2FB1A2;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.profile-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #F4E9CD;
+    cursor: pointer;
+}
+
+.profile-container input[type="range"]::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #F4E9CD;
+    cursor: pointer;
+}
+
+.profile-container button {
+    background-color: #2FB1A2;
+    color: #F4E9CD;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.profile-container button:hover {
+    background-color: #3fcdb3;
 }

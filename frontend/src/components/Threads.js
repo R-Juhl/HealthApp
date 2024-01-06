@@ -19,7 +19,10 @@ function Threads({ setCurrentView, setSelectedThreadId }) {
       setThreads(data.threads);
     };
 
-    fetchThreads();
+    // Only fetch threads if a user is logged in
+    if (loggedInUserId) {
+      fetchThreads();
+    }
   }, [loggedInUserId]);
 
   const handleThreadClick = (threadId) => {

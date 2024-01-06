@@ -30,6 +30,7 @@ const MainContent = ({ currentView, setCurrentView, selectedThreadId, setSelecte
                 return <Bot
                     selectedThreadId={selectedThreadId}
                     setSelectedThreadId={setSelectedThreadId}
+                    setCurrentView={setCurrentView}
                 />;
             case 'Threads':
                 return <Threads

@@ -5,7 +5,8 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from datetime import datetime, timedelta
-from modules.models import db, User, UserThreads
+import json
+from modules.models import db, User, UserThreads, UserProfile
 
 # Modules:
 from modules.bot_default import get_initial_message, continue_thread, get_thread, get_thread_messages
@@ -42,6 +43,9 @@ db.init_app(app)
 with app.app_context():
     #db.drop_all() # For dev to delete all tables and create them from scratch
     db.create_all()
+
+
+### General and Header.js ###
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
@@ -139,7 +143,44 @@ def update_user_version():
     return jsonify({"error": "User not found"}), 404
 
 
-### Module functions/routes: ###
+### Profile.js ###
+
+@app.route('/get_user_profile', methods=['POST'])
+def get_user_profile():
+    user_id = request.json['user_id']
+    user_profile = UserProfile.query.filter_by(user_id=user_id).first()
+    if user_profile:
+        profile_data = user_profile.to_dict()
+        return jsonify(profile_data), 200
+    return jsonify({"error": "Profile not found"}), 404
+
+@app.route('/update_user_profile', methods=['POST'])
+def update_user_profile():
+    data = request.json
+    user_id = data['user_id']
+    user_profile = UserProfile.query.filter_by(user_id=user_id).first()
+    if not user_profile:
+        user_profile = UserProfile(user_id=user_id)
+
+    # Combine goals from checkboxes and additional text field
+    combined_goals = {**data.get('goals', {}), "additionalGoals": data.get('additionalGoals', '')}
+    goals_json = json.dumps(combined_goals)
+
+    # Update fields
+    user_profile.age = data.get('age')
+    user_profile.height = data.get('height')
+    user_profile.fitness_level = data.get('fitnessLevel')
+    user_profile.dietary_restrictions = data.get('dietaryRestrictions')
+    user_profile.health_conditions = data.get('healthConditions')
+    user_profile.goals = goals_json
+    user_profile.height_unit = data.get('heightUnit', "cm")
+
+    db.session.add(user_profile)
+    db.session.commit()
+    return jsonify({"message": "Profile updated successfully"}), 200
+
+
+### Bot.js ###
 
 # Route for creating a new thread #
 @app.route('/create_new_thread', methods=['POST'])

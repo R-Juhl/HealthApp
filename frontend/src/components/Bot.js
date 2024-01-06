@@ -8,7 +8,7 @@ import UserIdContext from '../contexts/UserIdContext';
 
 import { HiOutlineVolumeUp, HiOutlineVolumeOff, HiPlusCircle, HiMicrophone } from "react-icons/hi";
 
-function Bot({ onLeaveThread, selectedThreadId, setSelectedThreadId }) {
+function Bot({ setCurrentView, selectedThreadId, setSelectedThreadId }) {
   const { loggedInUserId } = useContext(UserIdContext);
   //const { language } = useLanguage();
   //const text = language === 'en' ? en : dk;
@@ -17,9 +17,9 @@ function Bot({ onLeaveThread, selectedThreadId, setSelectedThreadId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [customMessage, setCustomMessage] = useState("");
   const [loadingDots, setLoadingDots] = useState('');
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioSrc, setAudioSrc] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleTTSButtonClick = async (formattedMessage) => {
     const parser = new DOMParser();
@@ -109,10 +109,15 @@ function Bot({ onLeaveThread, selectedThreadId, setSelectedThreadId }) {
       }
     };
   
-    if (selectedThreadId) {
-      loadThread(selectedThreadId);
+    // Check if the user is logged in before attempting to load or create a thread
+    if (loggedInUserId) {
+      if (selectedThreadId) {
+        loadThread(selectedThreadId);
+      } else {
+        initiateThread();
+      }
     } else {
-      initiateThread();
+      setErrorMessage("You must be logged in to use the Chat Bot");
     }
   }, [selectedThreadId, loggedInUserId, fetchInitialMessage]);
   
@@ -172,13 +177,14 @@ function Bot({ onLeaveThread, selectedThreadId, setSelectedThreadId }) {
 
   const handleLeaveThread = () => {
     setSelectedThreadId(null);
-    onLeaveThread();
+    setCurrentView('Home');
   };
 
   return (
     <div className="bot-container">
       <div className="bot-chat-container">
         <h1 className='bot-title'>AI Health Bot</h1>
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
         <div>
           {messages.map((formattedMessage, index) => {
             const role = formattedMessage.includes('message-box user') ? 'user' : 'assistant';
@@ -210,7 +216,13 @@ function Bot({ onLeaveThread, selectedThreadId, setSelectedThreadId }) {
                 onChange={(e) => setCustomMessage(e.target.value)}
                 className="input-style"
               />
-              <button className="button-style" onClick={handleCustomInput}>Submit</button>
+              <button 
+                className="button-style" 
+                onClick={handleCustomInput}
+                disabled={!loggedInUserId} // Disable button if user is not logged in
+              >
+                Submit
+              </button>
             </div>
           </>
           <div>
