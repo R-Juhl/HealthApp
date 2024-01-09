@@ -3,16 +3,75 @@
 .welcome-container {
     width: 100vw;
     height: calc(100vh - 60px);
+    overflow-y: auto;
     background-color: #1A2F38;
     color: #F4E9CD;
     position: fixed;
     top: 60px;
     padding: 10px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
     flex-direction: column;
-    gap: 20px; /* Space between flex items */
+    align-items: center;
+    gap: 20px;
+    font-family: Montserrat;
     z-index: 9;
+}
+
+.welcome-header {
+    margin-top: 50px;
+}
+
+.logo {
+    width: 150px; /* Adjust as necessary */
+    height: auto;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.signup-button,
+.login-button {
+    background-color: #2FB1A2;
+    color: #F4E9CD;
+    border: none;
+    margin-bottom: 50px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.signup-button:hover,
+.login-button:hover {
+    background-color: #3fcdb3;
+}
+
+.info-section {
+    background-color: #0D181C;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    max-width: 1000px;
+}
+
+.info-section:hover {
+    outline: 3px solid #2FB1A2;
+    transition: outline 0.3s;
+    background-color: #13232A;
+}
+
+.info-section h2 {
+    transition: transform 0.3s;
+    transform-origin: left;
+}
+
+.info-section:hover h2 {
+    transform: scale(1.1);
+}
+
+.info-section p {
+    margin-bottom: 15px;
 }

@@ -142,12 +142,47 @@ function Bot({ setCurrentView, selectedThreadId, setSelectedThreadId }) {
       setMessages(prevMessages => [...prevMessages, formattedMessage]);
     }
     setIsLoading(false);
+
+    console.log("Messages length:", messages.length);
+
+    // After receiving a response, check if it's the first user message in the thread
+    if (messages.length === 1) {
+      // Call function to generate and save thread title only if it's the first user message
+      generateThreadTitle(threadId, userInput);
+      console.log("Message length === 1, calling generateThreadTitle with threadId:", threadId, "userInput:", userInput);
+    }
+  };
+
+  // Function to generate and save thread title
+  const generateThreadTitle = async (threadId, userInput) => {
+    console.log("Generating thread title for Thread ID:", threadId, "User Input:", userInput);
+    const response = await fetch('http://localhost:5000/generate_thread_title', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ thread_id: threadId, user_input: userInput })
+    });
+    const data = await response.json();
+    if(data.error) {
+        console.error("Error generating title:", data.error);
+    } else {
+        console.log("Thread title generated:", data.title);
+    }
   };
 
   const handleCustomInput = async () => {
+    if (!customMessage.trim()) return;  // Exit if the custom message is empty or only whitespace
+  
     setIsLoading(true);
     await handleNext(customMessage);
     setCustomMessage("");
+  };
+
+  const handleKeyPress = (e) => {
+    // Check if Enter key is pressed and custom message is not empty
+    if (e.key === 'Enter' && customMessage.trim()) {
+      e.preventDefault();  // Prevent the default action of Enter key in a textarea
+      handleCustomInput();
+    }
   };
 
   useEffect(() => {
@@ -210,12 +245,13 @@ function Bot({ setCurrentView, selectedThreadId, setSelectedThreadId }) {
               <button className="input-option-button"><HiMicrophone /></button>
             </div>
             <div>
-              <textarea
-                placeholder='Custom input'
-                value={customMessage}
-                onChange={(e) => setCustomMessage(e.target.value)}
-                className="input-style"
-              />
+            <textarea
+              placeholder='Custom input'
+              value={customMessage}
+              onChange={(e) => setCustomMessage(e.target.value)}
+              onKeyPress={handleKeyPress}  // Add this line to handle key press
+              className="input-style"
+            />
               <button 
                 className="button-style" 
                 onClick={handleCustomInput}

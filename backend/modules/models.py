@@ -43,4 +43,5 @@ class UserThreads(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     thread_id = db.Column(db.String(100))
+    title = db.Column(db.String(255))
     date_created = db.Column(db.DateTime, default=datetime.utcnow)

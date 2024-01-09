@@ -2,31 +2,46 @@
 
 .threads-container {
     width: 100vw;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 90px);
+    overflow-y: auto;
     background-color: #1A2F38;
     color: #F4E9CD;
     position: fixed;
-    top: 60px;
+    top: 90px;
     padding: 10px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
     flex-direction: column;
-    gap: 20px; /* Space between flex items */
+    align-items: center;
+    gap: 20px;
+    font-family: Montserrat;
     z-index: 9;
+}
+
+.threads-list {
+    width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Adjusts spacing evenly */
+    gap: 20px;
 }
 
 .thread-box {
     background-color: #0D181C;
-    margin: 10px;
     padding: 15px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
+    flex-basis: calc(33% - 40px); /* 3 columns layout */
+    max-width: calc(33% - 40px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .thread-box:hover {
+    outline: 3px solid #2FB1A2;
+    transition: outline 0.3s;
     background-color: #13232A;
 }
 
@@ -37,4 +52,105 @@
 
 .thread-box p {
     color: #A8BFC9;
+}
+
+.page-navigation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.edit-icon, .save-icon, .delete-icon {
+    color: #A8BFC9; /* Grey color */
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+}
+
+.edit-icon:hover, .save-icon:hover, .delete-icon:hover {
+    color: #2FB1A2; /* Blue hover color */
+}
+
+.edit-icon {
+    left: 10px;
+}
+
+.save-icon {
+    left: 40px;
+}
+
+.delete-icon {
+    right: 10px;
+}
+
+.thread-box {
+    position: relative; /* To position the icons correctly */
+}
+
+.thread-title-input {
+    background-color: #0D181C;
+    color: #F4E9CD;
+    border: none;
+    border-bottom: 1px solid #2FB1A2;
+    padding: 5px;
+    font-size: 1em;
+    text-align: center;
+    width: 100%;
+}
+
+.page-number {
+    background-color: #13232A;
+    color: #F4E9CD;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.page-number:hover {
+    background-color: #2FB1A2;
+}
+
+.page-number.current {
+    background-color: #2FB1A2;
+}
+
+.page-navigation button {
+    background-color: #0D181C;
+    color: #F4E9CD;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.page-navigation button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.page-navigation button:hover:not(:disabled) {
+    background-color: #2FB1A2;
+}
+
+.page-navigation span {
+    color: #F4E9CD;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+    .thread-box {
+        flex-basis: calc(50% - 40px); /* 2 columns layout */
+        max-width: calc(50% - 40px);
+    }
+}
+
+@media (max-width: 480px) {
+    .thread-box {
+        flex: 0 0 100%; /* 1 column layout */
+        max-width: 100%;
+    }
 }

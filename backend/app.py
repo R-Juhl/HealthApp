@@ -9,7 +9,7 @@ import json
 from modules.models import db, User, UserThreads, UserProfile
 
 # Modules:
-from modules.bot_default import get_initial_message, continue_thread, get_thread, get_thread_messages
+from modules.bot_default import get_initial_message, continue_thread, get_thread_messages
 
 from pathlib import Path
 import uuid
@@ -28,11 +28,7 @@ postgres_pw = os.environ.get("POSTGRES_PW_HEALTHAPP")
 postgres_host = os.environ.get("POSTGRES_HOST_HEALTHAPP")
 postgres_port = os.environ.get("POSTGRES_PORT_HEALTHAPP")
 postgres_db = os.environ.get("POSTGRES_DB_HEALTHAPP")
-print("DB User:", postgres_user)
-print("DB Password:", postgres_pw)
-print("DB Host:", postgres_host)
-print("DB Port:", postgres_port)
-print("DB Name:", postgres_db)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{postgres_user}:{postgres_pw}@{postgres_host}:{postgres_port}/{postgres_db}?sslmode=require'
 
 app.config['SECRET_KEY'] = os.environ.get("SECRET_TOKEN_KEY_HEALTHAPP")
@@ -180,6 +176,53 @@ def update_user_profile():
     return jsonify({"message": "Profile updated successfully"}), 200
 
 
+### Threads.js ###
+
+# Route for getting the user's threads #
+@app.route('/get_user_threads', methods=['POST'])
+def get_user_threads():
+    user_id = request.json['user_id']
+    sessions = UserThreads.query.filter_by(user_id=user_id).all()
+    session_list = [{
+        "thread_id": session.thread_id,
+        "date": session.date_created.strftime("%Y-%m-%d"),
+        "title": session.title or "Untitled Thread"
+    } for session in sessions]
+    return jsonify({"threads": session_list}), 200
+
+@app.route('/cleanup_empty_threads', methods=['POST'])
+def cleanup_empty_threads():
+    user_id = request.json.get('user_id')
+
+    # Find and delete threads where the title is None (null)
+    UserThreads.query.filter_by(user_id=user_id, title=None).delete()
+    
+    db.session.commit()
+    return jsonify({"message": "Empty threads cleaned up"}), 200
+
+@app.route('/update_thread_title', methods=['POST'])
+def update_thread_title():
+    data = request.json
+    thread_id = data['thread_id']
+    new_title = data['title']
+    thread = UserThreads.query.filter_by(thread_id=thread_id).first()
+    if thread:
+        thread.title = new_title
+        db.session.commit()
+        return jsonify({"message": "Thread title updated successfully"}), 200
+    return jsonify({"error": "Thread not found"}), 404
+
+@app.route('/delete_thread', methods=['POST'])
+def delete_thread():
+    thread_id = request.json['thread_id']
+    thread = UserThreads.query.filter_by(thread_id=thread_id).first()
+    if thread:
+        db.session.delete(thread)
+        db.session.commit()
+        return jsonify({"message": "Thread deleted successfully"}), 200
+    return jsonify({"error": "Thread not found"}), 404
+
+
 ### Bot.js ###
 
 # Route for creating a new thread #
@@ -192,17 +235,41 @@ def create_new_thread():
     db.session.commit()
     return jsonify({"thread_id": new_thread.id}), 201
 
-# Route for getting the user's threads #
-@app.route('/get_user_threads', methods=['POST'])
-def get_user_threads():
-    user_id = request.json['user_id']
-    sessions = UserThreads.query.filter_by(user_id=user_id).all()
-    session_list = [{
-        "thread_id": session.thread_id,
-        "date": session.date_created.strftime("%Y-%m-%d"),  # Formatting the date
-        "title": "Thread Title"  # Placeholder title
-    } for session in sessions]
-    return jsonify({"threads": session_list}), 200
+# Route for generating a thread title #
+@app.route('/generate_thread_title', methods=['POST'])
+def generate_thread_title():
+    data = request.json
+    thread_id = data['thread_id']
+    user_input = data['user_input']
+
+    prompt = f"Generate a very short/concise thread title (for out Health AI chatbot app) based on the following user input: {user_input}"
+
+    # Call OpenAI API to generate a title based on user input
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=150,
+            temperature=0.7
+        )
+        title = response.choices[0].message.content.strip()
+        title = title.strip('"')
+
+        # Truncate the title if it exceeds 255 characters
+        truncated_title = title[:255]
+
+        print("Generated Title:", truncated_title)
+
+        # Save the title to the UserThreads table
+        user_thread = UserThreads.query.filter_by(thread_id=thread_id).first()
+        if user_thread:
+            user_thread.title = title
+            db.session.commit()
+            return jsonify({"message": "Thread title updated successfully", "title": title}), 200
+        else:
+            return jsonify({"error": "Thread not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Route for getting the messages of a thread #
 @app.route('/get_thread_messages', methods=['POST'])
